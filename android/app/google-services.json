@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "662092649375",
+    "project_id": "objectdetection-e56aa",
+    "storage_bucket": "objectdetection-e56aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662092649375:android:23feb98b604c7eee9a23aa",
+        "android_client_info": {
+          "package_name": "com.example.object_detection"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662092649375-cjm616mk75lao44vk71rb8t7m28e5igd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkTICDkic96ErUakzzR0GCcNB-6t7Y-C8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662092649375-cjm616mk75lao44vk71rb8t7m28e5igd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
