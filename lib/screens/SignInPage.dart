@@ -13,7 +13,7 @@ class _SignInPageState extends State<SignInPage> {
   String _email, _password;
 
   checkAuthentication() async {
-    _auth.authStateChanges().listen((user) async {
+    _auth.authStateChanges().listen((user) {
       if (user != null) {
         Navigator.pushReplacementNamed(context, "/home");
       }
@@ -36,6 +36,7 @@ class _SignInPageState extends State<SignInPage> {
       try {
         UserCredential user = await _auth.signInWithEmailAndPassword(
             email: _email, password: _password);
+        this.checkAuthentication();
       } catch (error) {
         showError(error.toString());
       }

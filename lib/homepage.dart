@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:object_detection/realtime/live_camera.dart';
+import 'package:object_detection/screens/Todos.dart';
 import 'package:object_detection/static%20image/static.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +20,8 @@ class _HomepageState extends State<Homepage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User firebaseUser;
 
+  bool isLoading = true;
+
   getUser() async {
     User user = _auth.currentUser;
     await user?.reload();
@@ -27,9 +30,11 @@ class _HomepageState extends State<Homepage> {
     if (user != null) {
       setState(() {
         this.firebaseUser = user;
+        this.isLoading = false;
       });
+    } else {
+      Navigator.pushReplacementNamed(context, "/signin");
     }
-    print(user);
   }
 
   signoutScreen(context) async {
@@ -66,12 +71,30 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.logout),
-        backgroundColor: Colors.red,
-        onPressed: () {
-          signoutScreen(context);
-        },
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: "btn1",
+            child: Icon(Icons.add_task_outlined),
+            backgroundColor: Colors.blue,
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Todos()));
+            },
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          FloatingActionButton(
+            heroTag: "btn2",
+            child: Icon(Icons.logout),
+            backgroundColor: Colors.red,
+            onPressed: () {
+              signoutScreen(context);
+            },
+          ),
+        ],
       ),
       appBar: AppBar(
         title: Text("Object Detector App"),
@@ -82,73 +105,77 @@ class _HomepageState extends State<Homepage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(50.0),
-            child: Image(
-              image: AssetImage("assets/logo.png"),
-              height: 100,
-              width: 100,
-            ),
-          ),
-          Center(
-            child: Container(
-              padding: EdgeInsets.only(top: 50.0),
-              child: Text(
-                'Welcome, ${getUserName()}',
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-          ),
-          Center(
-            child: Container(
-              padding: EdgeInsets.only(top: 10.0, bottom: 50.0),
-              child: Text(
-                'you are logged in as ${getEmail()}',
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-          ),
-          Container(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ButtonTheme(
-                    minWidth: 170,
-                    child: ElevatedButton(
-                      child: Text("Detect in Image"),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StaticImage(),
-                          ),
-                        );
-                      },
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(50.0),
+                  child: Image(
+                    image: AssetImage("assets/logo.png"),
+                    height: 100,
+                    width: 100,
+                  ),
+                ),
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.only(top: 50.0),
+                    child: Text(
+                      'Welcome, ${getUserName()}',
+                      style: TextStyle(fontSize: 20),
                     ),
                   ),
-                  ButtonTheme(
-                    minWidth: 160,
-                    child: ElevatedButton(
-                      child: Text("Real Time Detection"),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LiveFeed(cameras),
-                          ),
-                        );
-                      },
+                ),
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 50.0),
+                    child: Text(
+                      'you are logged in as ${getEmail()}',
+                      style: TextStyle(fontSize: 20),
                     ),
                   ),
-                ],
-              ),
+                ),
+                Container(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        ButtonTheme(
+                          minWidth: 170,
+                          child: ElevatedButton(
+                            child: Text("Detect in Image"),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => StaticImage(),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        ButtonTheme(
+                          minWidth: 160,
+                          child: ElevatedButton(
+                            child: Text("Real Time Detection"),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LiveFeed(cameras),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 

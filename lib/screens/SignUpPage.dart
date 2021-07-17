@@ -150,7 +150,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           onPressed: signUp,
                           child: Text(
-                            'Sign In',
+                            'Sign Up',
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
                         ),

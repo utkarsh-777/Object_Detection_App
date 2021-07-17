@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:object_detection/screens/SignInPage.dart';
 import 'package:object_detection/screens/SignUpPage.dart';
 import 'package:object_detection/homepage.dart';
+import 'package:object_detection/screens/Todos.dart';
 
 List<CameraDescription> cameras;
 
@@ -31,7 +32,8 @@ class _MyAppState extends State<MyApp> {
       routes: <String, WidgetBuilder>{
         "/signup": (BuildContext context) => SignUpPage(),
         "/signin": (BuildContext context) => SignInPage(),
-        "/home": (BuildContext context) => Homepage(cameras: cameras)
+        "/home": (BuildContext context) => Homepage(cameras: cameras),
+        "/todos": (BuildContext context) => Todos(),
       },
     );
   }
