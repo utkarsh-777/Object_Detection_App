@@ -7,14 +7,24 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 
 class AddTodos extends StatefulWidget {
-  AddTodos({Key key}) : super(key: key);
+  final String user;
+  AddTodos({Key key, @required this.user}) : super(key: key);
 
   @override
-  _AddTodosState createState() => _AddTodosState();
+  _AddTodosState createState() => _AddTodosState(user);
 }
 
 class _AddTodosState extends State<AddTodos> {
+  String user;
+  _AddTodosState(this.user);
+
   DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+
+  @override
+  void initState() {
+    super.initState();
+    _databaseReference = _databaseReference.child(user);
+  }
 
   String _title = '';
   String _description = '';

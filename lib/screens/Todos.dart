@@ -1,29 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:object_detection/screens/AddTodos.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
+//import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:object_detection/screens/EditTodos.dart';
 
 class Todos extends StatefulWidget {
-  Todos({Key key}) : super(key: key);
+  final String user;
+  Todos({Key key, @required this.user}) : super(key: key);
 
   @override
-  _TodosState createState() => _TodosState();
+  _TodosState createState() => _TodosState(user);
 }
 
 class _TodosState extends State<Todos> {
+  String user;
+  _TodosState(this.user);
+
+  bool isLoading = true;
+  List todoData = [];
+
   DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
 
-  navigateToEditTodos(id) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => EditTodos(id: id)));
+  navigateToEditTodos(BuildContext context, id, user) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => EditTodos(id: id, user: user)));
   }
 
-  getImage(snapshot) {
-    if (snapshot.value['photoUrl'] == "empty") {
+  getImage(photoUrl) {
+    if (photoUrl == "empty") {
       return DecorationImage(image: AssetImage("assets/todo.png"));
     } else {
-      return DecorationImage(image: NetworkImage(snapshot.value['photoUrl']));
+      return DecorationImage(image: NetworkImage(photoUrl));
     }
   }
 
@@ -33,6 +40,33 @@ class _TodosState extends State<Todos> {
     } else {
       return Colors.redAccent;
     }
+  }
+
+  getData() async {
+    setState(() {});
+    _databaseReference.child(user).onValue.listen((event) {
+      List data = [];
+      Map<dynamic, dynamic> values = event.snapshot.value;
+      values.forEach((key, values) {
+        data.add({
+          'key': key,
+          'title': values['title'],
+          'description': values['description'],
+          'isCompleted': values['isCompleted'],
+          'photoUrl': values['photoUrl']
+        });
+      });
+      setState(() {
+        todoData = data;
+        isLoading = false;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.getData();
   }
 
   @override
@@ -45,62 +79,69 @@ class _TodosState extends State<Todos> {
         child: Icon(Icons.add),
         backgroundColor: Colors.orangeAccent,
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddTodos()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AddTodos(user: user)));
         },
       ),
       body: Container(
-        child: FirebaseAnimatedList(
-          duration: const Duration(milliseconds: 300),
-          query: _databaseReference,
-          itemBuilder: (BuildContext context, DataSnapshot snapshot,
-              Animation<double> animation, int index) {
-            return GestureDetector(
-              onTap: () {
-                navigateToEditTodos(snapshot.key);
-              },
-              child: Card(
-                color: getColor(snapshot.value['isCompleted']),
-                elevation: 3,
-                child: Container(
-                  margin: EdgeInsets.all(10.0),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        width: 50.0,
-                        height: 50.0,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, image: getImage(snapshot)),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${snapshot.value['title']}",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold),
+          child: isLoading
+              ? todoData.length == 0
+                  ? Center(
+                      child: Text(
+                      'No Todos',
+                      style: TextStyle(fontSize: 20.0),
+                    ))
+                  : Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                  itemCount: todoData.length,
+                  itemBuilder: (BuildContext context, int index) => (Container(
+                      child: Container(
+                          child: GestureDetector(
+                    onTap: () {
+                      navigateToEditTodos(
+                          context, todoData[index]['key'], user);
+                    },
+                    child: Card(
+                      color: getColor(todoData[index]['isCompleted']),
+                      elevation: 3,
+                      child: Container(
+                        margin: EdgeInsets.all(10.0),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              width: 50.0,
+                              height: 50.0,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: getImage(todoData[index]['photoUrl'])),
                             ),
-                            Text(
-                              "${snapshot.value['description']}",
-                              style: TextStyle(
-                                color: Colors.black,
+                            Container(
+                              margin: EdgeInsets.all(20.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${todoData[index]['title']}",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "${todoData[index]['description']}",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  )
+                                ],
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
+                    ),
+                  )))),
+                )),
     );
   }
 }

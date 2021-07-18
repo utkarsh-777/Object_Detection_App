@@ -33,7 +33,6 @@ class _MyAppState extends State<MyApp> {
         "/signup": (BuildContext context) => SignUpPage(),
         "/signin": (BuildContext context) => SignInPage(),
         "/home": (BuildContext context) => Homepage(cameras: cameras),
-        "/todos": (BuildContext context) => Todos(),
       },
     );
   }

@@ -3,20 +3,21 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:object_detection/model/Todo.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:object_detection/screens/Todos.dart';
 import 'dart:io';
 import 'package:path/path.dart';
 
 class EditTodos extends StatefulWidget {
-  final String id;
-  EditTodos({Key key, @required this.id}) : super(key: key);
+  final String id, user;
+  EditTodos({Key key, @required this.id, this.user}) : super(key: key);
 
   @override
-  _EditTodosState createState() => _EditTodosState(id);
+  _EditTodosState createState() => _EditTodosState(id, user);
 }
 
 class _EditTodosState extends State<EditTodos> {
-  String id;
-  _EditTodosState(this.id);
+  String id, user;
+  _EditTodosState(this.id, this.user);
 
   String _title = "";
   String _description = "";
@@ -27,7 +28,7 @@ class _EditTodosState extends State<EditTodos> {
 
   TextEditingController _tiController = TextEditingController();
   TextEditingController _deController = TextEditingController();
-  TextEditingController _iCController = TextEditingController();
+  //TextEditingController _iCController = TextEditingController();
 
   bool isLoading = true;
 
@@ -41,7 +42,7 @@ class _EditTodosState extends State<EditTodos> {
   }
 
   getTodo(id) async {
-    _databaseReference.child(id).onValue.listen((event) async {
+    _databaseReference.child(user).child(id).onValue.listen((event) async {
       Todo _todo = Todo.fromSnapshot(event.snapshot);
 
       _tiController.text = _todo.title;
@@ -64,6 +65,7 @@ class _EditTodosState extends State<EditTodos> {
           Todo.withId(id, _title, _description, _photoUrl, _isCompleted);
 
       await _databaseReference
+          .child(user)
           .child(id)
           .set(updatedTodo.toJson())
           .whenComplete(() => navigateToLastScreen(context));
@@ -131,7 +133,7 @@ class _EditTodosState extends State<EditTodos> {
                   child: Text('Cancel')),
               ElevatedButton(
                   onPressed: () async {
-                    await _databaseReference.child(id).remove();
+                    await _databaseReference.child(user).child(id).remove();
                     Navigator.of(context).pop();
                     navigateToLastScreen(context);
                   },
@@ -248,6 +250,7 @@ class _EditTodosState extends State<EditTodos> {
                               primary: Colors.orangeAccent,
                             ),
                             onPressed: () {
+                              Navigator.of(context).pop();
                               updateTodo(context);
                             },
                             child: Icon(

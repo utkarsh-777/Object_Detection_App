@@ -80,7 +80,9 @@ class _HomepageState extends State<Homepage> {
             backgroundColor: Colors.blue,
             onPressed: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Todos()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Todos(user: firebaseUser.uid)));
             },
           ),
           SizedBox(

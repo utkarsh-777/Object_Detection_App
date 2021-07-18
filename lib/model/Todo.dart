@@ -8,7 +8,12 @@ class Todo {
   bool _isCompleted;
 
   //constructor for add
-  Todo(this._title, this._description, this._photoUrl, this._isCompleted);
+  Todo(
+    this._title,
+    this._description,
+    this._photoUrl,
+    this._isCompleted,
+  );
 
   //constructor for edit
   Todo.withId(this._id, this._title, this._description, this._photoUrl,
