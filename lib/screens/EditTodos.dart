@@ -147,7 +147,7 @@ class _EditTodosState extends State<EditTodos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("View / Edit Todo"),
+        title: Text("View / Edit warehouse"),
       ),
       body: Container(
         child: isLoading

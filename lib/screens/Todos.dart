@@ -73,7 +73,7 @@ class _TodosState extends State<Todos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todos'),
+        title: Text('Warehouse'),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
