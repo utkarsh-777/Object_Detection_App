@@ -120,27 +120,32 @@ class _EditTodosState extends State<EditTodos> {
 
   deleteTodo(BuildContext context) async {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Delete?'),
-            content: Text('Delete Todo'),
-            actions: [
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Cancel')),
-              ElevatedButton(
-                  onPressed: () async {
-                    await _databaseReference.child(user).child(id).remove();
-                    Navigator.of(context).pop();
-                    navigateToLastScreen(context);
-                  },
-                  child: Text('Delete')),
-            ],
-          );
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete?'),
+          content: Text('Delete Todo'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _databaseReference.child(user).child(id).remove();
+                Navigator.of(context).pop();
+                navigateToLastScreen(context);
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

@@ -43,24 +43,28 @@ class _TodosState extends State<Todos> {
   }
 
   getData() async {
-    setState(() {});
-    _databaseReference.child(user).onValue.listen((event) {
-      List data = [];
-      Map<dynamic, dynamic> values = event.snapshot.value;
-      values.forEach((key, values) {
-        data.add({
-          'key': key,
-          'title': values['title'],
-          'description': values['description'],
-          'isCompleted': values['isCompleted'],
-          'photoUrl': values['photoUrl']
+    _databaseReference.child(user).onValue.listen(
+      (event) {
+        List data = [];
+        if (event.snapshot.value != null) {
+          Map<dynamic, dynamic> values = event.snapshot.value;
+          values.forEach((key, values) {
+            data.add({
+              'key': key,
+              'title': values['title'],
+              'description': values['description'],
+              'isCompleted': values['isCompleted'],
+              'photoUrl': values['photoUrl']
+            });
+          });
+        }
+        setState(() {
+          todoData = data;
+          isLoading = false;
         });
-      });
-      setState(() {
-        todoData = data;
-        isLoading = false;
-      });
-    });
+        print(todoData.length);
+      },
+    );
   }
 
   @override
@@ -85,63 +89,69 @@ class _TodosState extends State<Todos> {
       ),
       body: Container(
           child: isLoading
-              ? todoData.length == 0
-                  ? Center(
-                      child: Text(
-                      'No Todos',
-                      style: TextStyle(fontSize: 20.0),
-                    ))
-                  : Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  itemCount: todoData.length,
-                  itemBuilder: (BuildContext context, int index) => (Container(
-                      child: Container(
+              ? Center(child: CircularProgressIndicator())
+              : todoData.length > 0
+                  ? ListView.builder(
+                      itemCount: todoData.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          (Container(
+                        child: Container(
                           child: GestureDetector(
-                    onTap: () {
-                      navigateToEditTodos(
-                          context, todoData[index]['key'], user);
-                    },
-                    child: Card(
-                      color: getColor(todoData[index]['isCompleted']),
-                      elevation: 3,
-                      child: Container(
-                        margin: EdgeInsets.all(10.0),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              width: 50.0,
-                              height: 50.0,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: getImage(todoData[index]['photoUrl'])),
-                            ),
-                            Container(
-                              margin: EdgeInsets.all(20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "${todoData[index]['title']}",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "${todoData[index]['description']}",
-                                    style: TextStyle(
-                                      color: Colors.black,
+                            onTap: () {
+                              navigateToEditTodos(
+                                  context, todoData[index]['key'], user);
+                            },
+                            child: Card(
+                              color: getColor(todoData[index]['isCompleted']),
+                              elevation: 3,
+                              child: Container(
+                                margin: EdgeInsets.all(10.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: 50.0,
+                                      height: 50.0,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: getImage(
+                                              todoData[index]['photoUrl'])),
                                     ),
-                                  )
-                                ],
+                                    Container(
+                                      margin: EdgeInsets.all(20.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${todoData[index]['title']}",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            "${todoData[index]['description']}",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
+                      )),
+                    )
+                  : Center(
+                      child: Text(
+                        'No Todos',
+                        style: TextStyle(fontSize: 20.0),
                       ),
-                    ),
-                  )))),
-                )),
+                    )),
     );
   }
 }
