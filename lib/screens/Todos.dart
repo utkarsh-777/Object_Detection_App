@@ -148,7 +148,7 @@ class _TodosState extends State<Todos> {
                     )
                   : Center(
                       child: Text(
-                        'No Todos',
+                        'Nothing here!',
                         style: TextStyle(fontSize: 20.0),
                       ),
                     )),

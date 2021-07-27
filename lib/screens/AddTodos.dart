@@ -89,7 +89,7 @@ class _AddTodosState extends State<AddTodos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Todo'),
+        title: Text('Add into Warehouse'),
       ),
       body: Container(
         child: Padding(

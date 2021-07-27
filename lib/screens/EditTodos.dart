@@ -124,7 +124,7 @@ class _EditTodosState extends State<EditTodos> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Delete?'),
-          content: Text('Delete Todo'),
+          content: Text('Delete warehouse'),
           actions: [
             ElevatedButton(
               onPressed: () {
